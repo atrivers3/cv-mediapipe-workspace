@@ -33,8 +33,8 @@ output_json = os.path.join(OUTPUT_DIR, f"{video_filename}.json")
 mp_holistic = mp.solutions.holistic
 
 holistic = mp_holistic.Holistic(
-    min_detection_confidence=0.5,
-    min_tracking_confidence=0.5,
+    min_detection_confidence=0.3,  # Lowered for hands in sign language
+    min_tracking_confidence=0.3,
     model_complexity=2
 )
 
@@ -63,8 +63,9 @@ while cap.isOpened():
     }
 
     if results.pose_landmarks:
-        for lm in results.pose_landmarks.landmark:  #Loop through 33 Body points
+        for idx, lm in enumerate(results.pose_landmarks.landmark):  #Loop through 33 Body points
             frame_landmarks["pose"].append({
+                "id": idx,
                 "x": lm.x,
                 "y": lm.y,
                 "z": lm.z,
@@ -73,21 +74,21 @@ while cap.isOpened():
 
 
     if results.left_hand_landmarks:
-        for lm in results.left_hand_landmarks.landmark: #Loop through 21 left hand points
+        for idx, lm in enumerate(results.left_hand_landmarks.landmark): #Loop through 21 left hand points
             frame_landmarks["left_hand"].append({
+                "id": idx,
                 "x": lm.x,
                 "y": lm.y,
                 "z": lm.z,
-                "visibility": lm.visibility
             })
 
     if results.right_hand_landmarks:
-        for lm in results.right_hand_landmarks.landmark: #Loop through 21 left hand points
+        for idx, lm in enumerate(results.right_hand_landmarks.landmark): #Loop through 21 left hand points
             frame_landmarks["right_hand"].append({
+                "id": idx,
                 "x": lm.x,
                 "y": lm.y,
                 "z": lm.z,
-                "visibility": lm.visibility
             })
 
     all_landmarks.append(frame_landmarks)
